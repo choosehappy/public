@@ -15,7 +15,16 @@ mkdir(outdir);
 %etc
 Rois=[];
 Regions=xDoc.getElementsByTagName('Annotation'); % get a list of all the region tags
+fprintf('Finding Rois (%d): \t',Regions.getLength-1);
 for regioni = 0:Regions.getLength-1
+    if(mod(regioni,10)==0)
+        if(mod(regioni,100)==0)
+            fprintf('%d',regioni);
+        else
+            
+            fprintf('.');
+        end
+    end
     Region=Regions.item(regioni);
     if(str2double(Region.getAttribute('LineColor'))==0) % ROI
         %get a list of all the vertexes (which are in order)
@@ -30,6 +39,7 @@ for regioni = 0:Regions.getLength-1
     end
     
 end
+fprintf('\n');
 
 num_roi=length(Rois);
 if(isempty(Rois))
@@ -39,20 +49,28 @@ end
 %if points are less than or greater than roi, add to roi(..).(lcolor).{i1}
 
 Regions=xDoc.getElementsByTagName('Annotation'); % get a list of all the region tags
-for regioni = 0:Regions.getLength-1
+fprintf('Aligning annotations to Rois (%d): \t',Regions.getLength-1);
+for regioni = 0:Regions.getLength-1    
+    if(mod(regioni,10)==0)
+        if(mod(regioni,100)==0)
+            fprintf('%d',regioni);
+        else
+            fprintf('.');
+        end
+    end
     Region=Regions.item(regioni);
     linecolor=str2double(Region.getAttribute('LineColor'));
     if(linecolor~=0) % not an roi.
         %get a list of all the vertexes (which are in order)
-        verticies=Region.getElementsByTagName('Vertex'); 
+        verticies=Region.getElementsByTagName('Vertex');
         xy=zeros(verticies.getLength-1,2); %allocate space for them
         for vertexi = 0:verticies.getLength-1 %iterate through all verticies
             
             %get the x value of that vertex
-            x=str2double(verticies.item(vertexi).getAttribute('X')); 
+            x=str2double(verticies.item(vertexi).getAttribute('X'));
             
             %get the y value of that vertex
-            y=str2double(verticies.item(vertexi).getAttribute('Y')); 
+            y=str2double(verticies.item(vertexi).getAttribute('Y'));
             xy(vertexi+1,:)=[x,y]; % finally save them into the array
         end
         
@@ -76,15 +94,21 @@ for regioni = 0:Regions.getLength-1
     end
     
 end
-
+fprintf('\n');
 % for all ROI, extract image, save, subtract corner from all points, make a
 % single mask of each color
 
 color_fields=fields(Rois(1));
 color_fields(~cellfun(@(x)x(1)=='c',color_fields))=[];
-
+fprintf('Writing Files (%d): \t',length(Rois));
 for roii= 1: length(Rois)
-    
+     if(mod(roii,2)==0)
+        if(mod(roii,10)==0)
+            fprintf('%d',roii);
+        else
+            fprintf('.');
+        end
+    end
     Rows=[Rois(roii).lxlyrxry(2) Rois(roii).lxlyrxry(4)];
     Cols=[Rois(roii).lxlyrxry(1) Rois(roii).lxlyrxry(3)];
     
@@ -95,24 +119,24 @@ for roii= 1: length(Rois)
     
     for colors=1:length(color_fields)
         annotations=Rois(roii).(color_fields{colors});
-       
+        
         if(isempty(annotations))
             continue
         end
-       
-       mask=zeros(nrow,ncol);
-       for ai = 1: length(annotations)
-           %make a mask and add it to the current mask
+        
+        mask=zeros(nrow,ncol);
+        for ai = 1: length(annotations)
+            %make a mask and add it to the current mask
             mask=mask+poly2mask(annotations{ai}(:,1)-Rois(roii).lxlyrxry(1),...
-                annotations{ai}(:,2)-Rois(roii).lxlyrxry(2),nrow,ncol); 
+                annotations{ai}(:,2)-Rois(roii).lxlyrxry(2),nrow,ncol);
             
-       end
-          
+        end
+        
         imwrite(mask,sprintf('%s/%s_%d_%d_%s.png',outdir,bigtiff_file(1:end-4), ...
             Rois(roii).lxlyrxry(2),Rois(roii).lxlyrxry(1),color_fields{colors}));
     end
     
 end
 
-
+fprintf('\n');
 
