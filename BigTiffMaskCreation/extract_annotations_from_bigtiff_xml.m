@@ -1,11 +1,15 @@
-function num_roi=extract_annotations_from_bigtiff_xml(bigtiff_file)
+function num_roi=extract_annotations_from_bigtiff_xml(bigtiff_file,outdir)
 %%
 % load xml
 % xml_file='PT 1_201501052111.xml';
 % bigtiff_file='PT 1_201501052111.tif';
 xml_file=strrep(bigtiff_file,'.tif','.xml');
 xDoc = xmlread(xml_file);
-mkdir('subs');
+if(~exist('outdir','var'))
+    outdir='subs';
+end
+
+mkdir(outdir);
 
 %find all rectangle regions and stick them in a struct, roi(..).ulx urx etc
 %etc
@@ -86,7 +90,7 @@ for roii= 1: length(Rois)
     
     io=imread(bigtiff_file,'Index',3,'PixelRegion',{Rows,Cols});
     [nrow,ncol,ndim]=size(io);
-    imwrite(io,sprintf('subs/%s_%d_%d.tif',bigtiff_file(1:end-4),...
+    imwrite(io,sprintf('%s/%s_%d_%d.tif',outdir,bigtiff_file(1:end-4),...
         Rois(roii).lxlyrxry(2),Rois(roii).lxlyrxry(1)));
     
     for colors=1:length(color_fields)
@@ -104,7 +108,7 @@ for roii= 1: length(Rois)
             
        end
           
-        imwrite(mask,sprintf('subs/%s_%d_%d_%s.png',bigtiff_file(1:end-4), ...
+        imwrite(mask,sprintf('%s/%s_%d_%d_%s.png',outdir,bigtiff_file(1:end-4), ...
             Rois(roii).lxlyrxry(2),Rois(roii).lxlyrxry(1),color_fields{colors}));
     end
     
