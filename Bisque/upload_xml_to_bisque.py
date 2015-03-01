@@ -37,7 +37,7 @@ for fname in files:
 
     #upload annotation
 
-    upload_url='%s/ds/gobject' % file_uri
+    upload_url='%s/gobject' % file_uri
     headers = {'content-type': 'text/xml'}
 
     response=requests.post(upload_url,data=open(fname).read(), auth=(USER,PASSWD),headers=headers)
