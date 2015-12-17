@@ -12,7 +12,7 @@ get_train_loss = @(x,varargin) x(end);
 
 idx=cellfun(@(x) ~isempty(regexpi(x,'Iteration\s\d+,\sloss')),logfile);
 train_loss=cellfun(@(x) str2double(get_train_loss(strsplit(x))),logfile(idx));
-train_iter=cellfun(@(x) str2double(get_train_iter(strsplit(x))),logfile(idx));
+train_iter=cellfun(@(x) str2double(get_iter(strsplit(x))),logfile(idx));
 
 
 idx=cellfun(@(x) ~isempty(regexpi(x,'Test.+loss')),logfile);
