@@ -2,15 +2,13 @@
 # coding: utf-8
 
 # In[1]:
-
 import numpy as np
 import matplotlib.pyplot as plt
-get_ipython().magic(u'matplotlib inline')
 import Image
 import scipy
 import time
 from scipy import interpolate
-from scipy.interpolate import griddata
+
     
 # Make sure that caffe is on the python path:
 caffe_root = '/home/axj232/caffe/'  

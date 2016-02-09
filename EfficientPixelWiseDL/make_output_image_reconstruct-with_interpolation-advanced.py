@@ -5,7 +5,6 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-get_ipython().magic(u'matplotlib inline')
 import Image
 import scipy
 import time
