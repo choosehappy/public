@@ -3,7 +3,6 @@
 
 # In[1]:
 import numpy as np
-import matplotlib.pyplot as plt
 import Image
 import scipy
 import time
@@ -129,12 +128,6 @@ cnew = np.arange(start_spot_col, end_spot_col, 1)
 #run the interpolation to create the final output image
 im_out_final = f(rnew, cnew)
 print "Time since beginning (after interpolation):\t %f"% (time.time()-start)
-
-
-# In[11]:
-
-#check it out to see if its sane
-plt.imshow(im_out_final)
 
 
 # In[12]:

@@ -4,7 +4,6 @@
 # In[1]:
 
 import numpy as np
-import matplotlib.pyplot as plt
 import Image
 import scipy
 import time
@@ -157,12 +156,6 @@ print "Total time:\t %f"%(time.time()-start)
 # In[11]:
 
 result0=result0.reshape(nrow_in,ncol_in)
-
-
-# In[12]:
-
-plt.imshow(result0)
-
 
 # In[13]:
 
