@@ -1,0 +1,19 @@
+#!/bin/bash
+#PBS -l walltime=320:00:00
+#PBS -l nodes=1:ppn=1:gpus=1:exclusive_process
+#PBS -M YOUR EMAIL HERE
+#PBS -q gpufermi
+#PBS -N %(kfoldi)d_TASK
+#PBS -m bea
+#PBS -o "%(kfoldi)d_TASK_output.out"
+#PBS -j oe
+
+
+cd YOUR_DIRECTORY_WHICH_HAS_THE_PROTOTXTS
+
+~/caffe/build/tools/caffe train --solver=./%(kfoldi)d-alexnet_solver.prototxt
+
+
+exit
+
+
