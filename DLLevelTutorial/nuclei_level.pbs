@@ -1,0 +1,22 @@
+#!/bin/bash
+#PBS -l walltime=320:00:00
+#PBS -l nodes=1:ppn=1:gpus=1:shared
+#PBS -M axj232@case.edu
+#PBS -q gpufermi
+#PBS -N nuclei_level_output
+#PBS -m bea
+#PBS -o nuclei_level_output.out
+#PBS -j oe
+
+
+cd /home/axj232/code/nuclei_level/test
+
+python create_output_image_vector.py "*.tif" 4 10 -b
+python create_output_image_vector.py "*.tif" 3 4 --thresh_lower .12 --thresh_upper .16
+python create_output_image_vector.py "*.tif" 2 2 --thresh_lower .18 --thresh_upper .8267
+python create_output_image_vector.py "*.tif" 1 1 --thresh_lower .733 --thresh_upper .61
+
+exit
+
+
+

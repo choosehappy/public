@@ -1,0 +1,13 @@
+net: "%(kfoldi)d-%(leveli)d-alexnet_traing_32w_db.prototxt"
+test_iter: %(numiter)d
+test_interval: 10000
+base_lr: 0.001
+lr_policy: "fixed"
+display: 1000
+max_iter: 600000
+weight_decay: 0.004
+snapshot: 10000
+snapshot_prefix: "%(kfoldi)d_%(leveli)d_caffenet_train_w32"
+solver_mode: GPU
+solver_type: ADAGRAD
+
