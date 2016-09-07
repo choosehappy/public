@@ -23,7 +23,6 @@ args= parser.parse_args()
 #this window size needs to be exactly the same size as that used to extract the patches from the matlab version
 wsize = 32
 hwsize= int(wsize/2)
-stride = 1 #incase we don't want to compute every pixel, we can add a skip
 
 BASE=args.base
 FOLD=args.fold
@@ -90,11 +89,11 @@ for base_fname in files:
 
 		outputimage_probs = np.zeros(shape=(image.shape[0],image.shape[1],3)) #make the output files where we'll store the data
 		outputimage_class = np.zeros(shape=(image.shape[0],image.shape[1]))
-		for rowi in xrange(hwsize+1,image.shape[0]-hwsize,stride):
+		for rowi in xrange(hwsize+1,image.shape[0]-hwsize):
 			print "%s\t (%.3f,%.3f)\t %d of %d" % (fname,time.time()-start_time,time.time()-start_time_iter,rowi,image.shape[0]-hwsize)
 			start_time_iter = time.time()
 			patches=[] #create a set of patches, oeprate on a per column basis
-			for coli in xrange(hwsize+1,image.shape[1]-hwsize,stride):
+			for coli in xrange(hwsize+1,image.shape[1]-hwsize):
 				patches.append(image[rowi-hwsize:rowi+hwsize, coli-hwsize:coli+hwsize,:])
 
 			prediction = net.predict(patches) #predict the output 
