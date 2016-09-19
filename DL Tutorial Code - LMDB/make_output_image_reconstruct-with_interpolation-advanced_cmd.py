@@ -32,6 +32,8 @@ parser.add_argument('-r', '--resize', help="resize factor, 2 = 50%, 1 = 100% 4 =
 parser.add_argument('-b', '--binary', help="binary mean file", default="DB_train.binaryproto", type=str)
 parser.add_argument('-m', '--model', help="model", default="full_convolutional_net.caffemodel", type=str)
 parser.add_argument('-y', '--deploy', help="deploy file", default="deploy_full.prototxt", type=str)
+parser.add_argument('-i', '--gpuid', help="id of gpu to use", default=0, type=int)
+
 
 args = parser.parse_args()
 
@@ -80,7 +82,7 @@ if(not args.gray):
 # In[4]:
 
 #set the mode to use the GPU
-caffe.set_device(0)
+caffe.set_device(args.gpuid)
 caffe.set_mode_gpu()
 
 # In[5]:
@@ -149,8 +151,11 @@ for fname in files:
         for c_displace in xrange(0,displace_factor):
             print "Row + Col displace:\t (%d/ %d) (%d/ %d) " %( r_displace, displace_factor,c_displace, displace_factor)
         
-        
-            im= im_orig[0+r_displace:-displace_factor+r_displace,0+c_displace:-displace_factor+c_displace] #displace the image
+            if(args.gray):
+                im= im_orig[0+r_displace:-displace_factor+r_displace,0+c_displace:-displace_factor+c_displace] #displace the image
+			else:
+				im= im_orig[0+r_displace:-displace_factor+r_displace,0+c_displace:-displace_factor+c_displace,:] #displace the image
+
             print im.shape
             out = net_full_conv.forward_all(data=np.asarray([transformer.preprocess('data', im)])) #get the output 
         #i'm only interested in the "positive class channel"
