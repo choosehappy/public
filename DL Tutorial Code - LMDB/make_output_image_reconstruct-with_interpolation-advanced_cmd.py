@@ -33,6 +33,7 @@ parser.add_argument('-b', '--binary', help="binary mean file", default="DB_train
 parser.add_argument('-m', '--model', help="model", default="full_convolutional_net.caffemodel", type=str)
 parser.add_argument('-y', '--deploy', help="deploy file", default="deploy_full.prototxt", type=str)
 parser.add_argument('-i', '--gpuid', help="id of gpu to use", default=0, type=int)
+parser.add_argument('-s', '--stride', help="stride to perform in displace", default=1, type=int)
 
 
 args = parser.parse_args()
@@ -147,14 +148,14 @@ for fname in files:
     yy_all=np.empty([0,0])
     zinter_all=np.empty([0,0])
 
-    for r_displace in xrange(0,displace_factor): # loop over the receptor field
-        for c_displace in xrange(0,displace_factor):
+    for r_displace in xrange(0,displace_factor,args.stride): # loop over the receptor field
+        for c_displace in xrange(0,displace_factor,args.stride):
             print "Row + Col displace:\t (%d/ %d) (%d/ %d) " %( r_displace, displace_factor,c_displace, displace_factor)
         
             if(args.gray):
                 im= im_orig[0+r_displace:-displace_factor+r_displace,0+c_displace:-displace_factor+c_displace] #displace the image
-			else:
-				im= im_orig[0+r_displace:-displace_factor+r_displace,0+c_displace:-displace_factor+c_displace,:] #displace the image
+            else:
+                im= im_orig[0+r_displace:-displace_factor+r_displace,0+c_displace:-displace_factor+c_displace,:] #displace the image
 
             print im.shape
             out = net_full_conv.forward_all(data=np.asarray([transformer.preprocess('data', im)])) #get the output 
