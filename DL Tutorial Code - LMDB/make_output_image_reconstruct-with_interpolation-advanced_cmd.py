@@ -130,8 +130,6 @@ for fname in files:
 
     im_orig = np.lib.pad(im_orig, ((hpatch_size, hpatch_size+displace_factor),(hpatch_size, hpatch_size+displace_factor),(0, 0)),  'symmetric')
 
-    im_orig = rgb2gray(im_orig)
-
     print im_orig.shape
 
     if(args.gray):
