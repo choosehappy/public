@@ -124,6 +124,7 @@ for group=groups
     if(strcmp('train',group{1})) 
         fprintf('writing mean file\n');
         mean_data=single(mean_data);
+		mean_data=mean_data(:, :, [3, 2, 1]);      
         caffe.io.write_mean(mean_data, mean_file);
     end
     
