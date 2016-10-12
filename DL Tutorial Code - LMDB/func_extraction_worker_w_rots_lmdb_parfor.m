@@ -68,6 +68,13 @@ for ri=1:ni
     for roti=1:nrots
         transaction.put(vrot(roti).key,vrot(roti).datum); %add them to the DB
     end
+    
+    if(mod(ri,5000)==0)
+        fprintf('writing 5000\n');
+        transaction.commit(); %commit the transaction
+        transaction = db.begin(); %start a transaction
+    end
+    
     total_sum=total_sum+patch_totals{ni}; %keep track of the total sum, so that we can update the mean 
 end
 transaction.commit(); %commit the transaction
