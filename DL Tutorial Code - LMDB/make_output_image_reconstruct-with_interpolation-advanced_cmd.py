@@ -170,8 +170,8 @@ for fname in files:
             end_spot_row=nrow_in+r_displace
             end_spot_col=ncol_in+c_displace
         
-            rinter=np.linspace(start_spot_row,end_spot_row,num=nrow_out)
-            cinter=np.linspace(start_spot_col,end_spot_col,num=ncol_out)
+            rinter=np.linspace(start_spot_row,end_spot_row-1,num=nrow_out)
+            cinter=np.linspace(start_spot_col,end_spot_col-1,num=ncol_out)
         
             xx,yy=np.meshgrid(cinter,rinter)
         
