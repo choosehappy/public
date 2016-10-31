@@ -5,7 +5,7 @@ import random
 def doAugmenttion(img):
     return np.rot90(img, random.randrange(4))
 
-class BlankSquareLayer(caffe.Layer):
+class RotationLayer(caffe.Layer):
     def setup(self, bottom, top):
         assert len(bottom) == 1, 'requires a single layer.bottom'
         assert bottom[0].data.ndim >= 3, 'requires image data'
