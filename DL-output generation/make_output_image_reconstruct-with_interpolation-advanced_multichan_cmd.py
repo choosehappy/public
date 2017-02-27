@@ -135,8 +135,9 @@ parser.add_argument('-c', '--confidence', help="number of confidence iterations"
 parser.add_argument('-l', '--layer', help="layer name from which to extract results", default="softmax", type=str)
 parser.add_argument('--matlab', help="make output as a single matlab readible file instead of a set of images", action="store_true")
 
-args = parser.parse_args()
-#args = parser.parse_args(["-lconv3b","-c1","-p65","-d8","-bDB_train_1.binaryproto","-msnapshot_iter_98850.caffemodel","-ydeploy.prototxt","-o./out/","test_image.png"])
+#args = parser.parse_args()
+args = parser.parse_args(["-lconv3b","-c1","-p65","-d8","-bDB_train_1.binaryproto","-msnapshot_iter_98850.caffemodel","-ydeploy.prototxt","-o./out/","test_image.png"])
+
 
 
 # In[9]:
@@ -217,8 +218,8 @@ for fname in files:
     print "saving to : \t %s" % newfname_prob
 
     if (os.path.exists(newfname_prob)):
-        print "NOT SKIPPING!!!"
-        #continue
+        print "Skipping as output file exists"
+        continue
         
     outputimage = np.zeros(shape=(10, 10))
     scipy.misc.imsave(newfname_prob, outputimage)
