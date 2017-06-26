@@ -135,8 +135,8 @@ parser.add_argument('-c', '--confidence', help="number of confidence iterations"
 parser.add_argument('-l', '--layer', help="layer name from which to extract results", default="softmax", type=str)
 parser.add_argument('--matlab', help="make output as a single matlab readible file instead of a set of images", action="store_true")
 
-#args = parser.parse_args()
-args = parser.parse_args(["-lconv3b","-c1","-p65","-d8","-bDB_train_1.binaryproto","-msnapshot_iter_98850.caffemodel","-ydeploy.prototxt","-o./out/","test_image.png"])
+args = parser.parse_args()
+#args = parser.parse_args(["-lconv3b","-c1","-p65","-d8","-bDB_train_1.binaryproto","-msnapshot_iter_98850.caffemodel","-ydeploy.prototxt","-o./out/","test_image.png"])
 
 
 
@@ -195,6 +195,14 @@ transformer.set_raw_scale('data', 255.0)
 if (not args.gray):
     transformer.set_channel_swap('data', (2, 1, 0))
 
+	
+	
+#padding for later which depends on if the patch size is odd or even
+if (args.patchsize % 2 == 0):  #even 
+    evenpad=1
+else: #odd	
+    evenpad=0
+	
 #set the mode to use the GPU
 caffe.set_device(args.gpuid)
 caffe.set_mode_gpu()
@@ -291,8 +299,8 @@ for fname in files:
                 
 
                 layer_pad=layer_sizes[args.layer]-1
-                rinter=np.arange(0+r_displace, nrow_in+r_displace+layer_pad*mult, mult) #need to add +1 to the end
-                cinter=np.arange(0+c_displace, ncol_in+c_displace+layer_pad*mult, mult) 
+                rinter=np.arange(0+r_displace, nrow_in+r_displace+layer_pad*mult+evenpad, mult) #only need to add one if the patch is even, if its odd we're ok
+                cinter=np.arange(0+c_displace, ncol_in+c_displace+layer_pad*mult+evenpad, mult) 
 
                 xx, yy = np.meshgrid(cinter, rinter)
 
