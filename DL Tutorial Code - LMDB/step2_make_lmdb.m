@@ -74,7 +74,7 @@ for group=groups
             npos=length(r); %number of locations actually extracted (note this doesn't include # of rotations as used above)
             
             if(make_layout_images) %add them to the layout image so we can identify them later
-                io_out=insertShape(io,'circle',[c r 2*ones([npos 1])],'Color','red');
+                io_out=insertShape(rgb2gray(io),'circle',[c r 2*ones([npos 1])],'Color','red');
             end
             
             fprintf('Number pos taken: \t%d\tof\t%d\n',npos,nnz(io_mask));
