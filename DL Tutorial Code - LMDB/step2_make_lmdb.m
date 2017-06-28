@@ -115,7 +115,7 @@ for group=groups
             
             %------- wrap up
             if(make_layout_images) %lastly, write out the image file to the layout directory, we're reducing it in size so that its smaller and using grayscale so the colors are easier to see
-                imwrite(imresize(rgb2gray(io_out),.33),sprintf('%s/layout/%s_layout.png',OUTDIR,fname_io(1:end-4)));
+                imwrite(imresize(io_out,.33),sprintf('%s/layout/%s_layout.png',OUTDIR,fname_io(1:end-4)));
             end
             
         end
