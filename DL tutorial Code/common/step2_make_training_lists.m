@@ -42,14 +42,14 @@ for fi=1:npatients %for each patient
                 subfnames=subfiles(subfi).fnames_subs_neg; %now get all of the negative patches
                 for zz=1:length(subfnames)
                     subfname=subfnames{zz};
-                    cellfun(@(x) fprintf(fid,'%s\t%d\n',x,0),subfname); %write them to the list as belonging to the 0 class (non nuclei)
+                    cellfun(@(x) fprintf(fid,'%s %d\n',x,0),subfname); %write them to the list as belonging to the 0 class (non nuclei)
                 end
                 
                 
                 subfnames=subfiles(subfi).fnames_subs_pos; %similarly for the positive patches
                 for zz=1:length(subfnames)
                     subfname=subfnames{zz};
-                    cellfun(@(x) fprintf(fid,'%s\t%d\n',x,1),subfname);
+                    cellfun(@(x) fprintf(fid,'%s %d\n',x,1),subfname);
                 end
                 
             catch err
