@@ -23,6 +23,8 @@ def doColorAug(img,args):
     # simple H&E color augmentation based on https://arxiv.org/pdf/1707.06183.pdf
     # Domain-adversarial neural networks to address the appearance variability of
     # histopathology images
+	
+	#NOTE, defaults assume data was stored as uint8 [0,255] . if data is stored as [0,1], scale accordingly
 
     img = img * np.random.uniform(args["a_min"], args["a_max"], [3]) + np.random.uniform(args["b_min"], args["b_max"], [3])
     return img
