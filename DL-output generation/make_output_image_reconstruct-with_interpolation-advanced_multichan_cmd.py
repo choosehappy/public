@@ -86,9 +86,9 @@ def change_deploy_size(deploy,model,newsize,transformer,mode):
     net =  caffe.io.caffe_pb2.NetParameter()
     text_format.Merge(open(deploy).read(), net)
     #change dimension as necessary
-    net.input_shape._values[0].dim[2]=newsize
-    net.input_shape._values[0].dim[3]=newsize
-    transformer.inputs={'data': [1,3,newsize,newsize]}
+    net.input_shape._values[0].dim[2]=newsize[0]
+    net.input_shape._values[0].dim[3]=newsize[1]
+    transformer.inputs={'data': [1,3,newsize[0],newsize[1]]}
     #convert to string..write to file..
     with open("deploy_xx.prototxt","w") as f:
         f.write(text_format.MessageToString(net))
@@ -227,7 +227,7 @@ for fname in files:
 
     if (os.path.exists(newfname_prob)):
         print "Skipping as output file exists"
-        continue
+        #continue
         
     outputimage = np.zeros(shape=(10, 10))
     scipy.misc.imsave(newfname_prob, outputimage)
@@ -285,7 +285,7 @@ for fname in files:
                                                                          "image input is %d, network is expecting %d" 
                                                                          % (im.shape[0], transformer.inputs['data'][2]))
 
-                    net_full_conv,transformer=change_deploy_size(args.deploy,args.model,im.shape[0],transformer,mode)
+                    net_full_conv,transformer=change_deploy_size(args.deploy,args.model,im.shape,transformer,mode)
     
                 #print im.shape
                 out = net_full_conv.forward_all(data=np.asarray([transformer.preprocess('data', im)]))  #get the output
@@ -308,7 +308,7 @@ for fname in files:
                 yy = yy.flatten()
                 output_sub_image = output_sub_image = data[...,0].flatten()
 
-                assert xx.shape[0] == output_sub_image.shape[0]
+                assert xx.shape[0] == output_sub_image.shape[0], "sizes %d %d " % (xx.shape[0] , output_sub_image.shape[0])
 
                 xx_all = np.append(xx_all, xx)
                 yy_all = np.append(yy_all, yy)
