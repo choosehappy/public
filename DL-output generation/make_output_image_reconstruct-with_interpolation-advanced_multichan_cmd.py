@@ -227,7 +227,7 @@ for fname in files:
 
     if (os.path.exists(newfname_prob)):
         print "Skipping as output file exists"
-        #continue
+        continue
         
     outputimage = np.zeros(shape=(10, 10))
     scipy.misc.imsave(newfname_prob, outputimage)
