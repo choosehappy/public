@@ -86,8 +86,13 @@ def change_deploy_size(deploy,model,newsize,transformer,mode):
     net =  caffe.io.caffe_pb2.NetParameter()
     text_format.Merge(open(deploy).read(), net)
     #change dimension as necessary
-    net.input_shape._values[0].dim[2]=newsize[0]
-    net.input_shape._values[0].dim[3]=newsize[1]
+    #caffe >.16 seems to use this style
+    net.input_shape[0].dim[2]=newsize[0]
+    net.input_shape[0].dim[3]=newsize[1]
+    #if the above causes an error, uncomment and use the lines below (caffe < .16 seems to use this type)
+#    net.input_shape._values[0].dim[2]=newsize[0]
+#    net.input_shape._values[0].dim[3]=newsize[1]
+    
     transformer.inputs={'data': [1,3,newsize[0],newsize[1]]}
     #convert to string..write to file..
     with open("deploy_xx.prototxt","w") as f:
