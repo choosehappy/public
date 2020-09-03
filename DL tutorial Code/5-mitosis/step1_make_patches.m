@@ -49,7 +49,7 @@ for ci=1:length(patients) % for each of the *patients* we extract patches
         io_cmask(bwmorph(io_mask,'dilate',10))=0; %remove the true positives from the computation mask 
     
         [r,c]=find(io_cmask); %find all possible pixels in the computation mask 
-        fnames_subs_neg=func_extraction_worker_w_rots(outdir,fname(1:end-4),io,hwsize,r,c,round(2.5*npos),1,'n',[0 90 180 270]); %%extract 2.5 times as many of them as positive pixels 
+        fnames_subs_neg=func_extraction_worker_w_rots(outdir,fname(1:end-4),io,hwsize,r,c,round(2.5*npos),0,'n',[0 90 180 270]); %%extract 2.5 times as many of them as positive pixels 
         
         patient_struct(ci).sub_file(fi).fnames_subs_pos=fnames_subs_pos; %save the positive filenames
         patient_struct(ci).sub_file(fi).fnames_subs_neg=fnames_subs_neg; %merge the 2 classes of negative to a single class and save those
