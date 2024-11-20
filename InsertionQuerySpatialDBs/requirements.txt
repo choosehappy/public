@@ -4,3 +4,4 @@ geoalchemy2
 orjson
 tqdm
 shapely
+psycopg2-binary
