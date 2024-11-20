@@ -1,0 +1,6 @@
+sqlalchemy
+sqlalchemy_utils
+geoalchemy2
+orjson
+tqdm
+shapely
