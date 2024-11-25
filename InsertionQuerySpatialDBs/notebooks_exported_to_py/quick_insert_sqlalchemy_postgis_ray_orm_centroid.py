@@ -1,19 +1,9 @@
-# ---
-# jupyter:
-#   jupytext:
-#     formats: ipynb,py:light
-#     text_representation:
-#       extension: .py
-#       format_name: light
-#       format_version: '1.5'
-#       jupytext_version: 1.16.1
-#   kernelspec:
-#     display_name: Python 3 (ipykernel)
-#     language: python
-#     name: python3
-# ---
+#!/usr/bin/env python
+# coding: utf-8
 
-# +
+# In[1]:
+
+
 from sqlalchemy import create_engine, Column, String, Integer, func, event, text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.dialects.postgresql import ARRAY
@@ -23,29 +13,41 @@ from tqdm import tqdm
 from shapely.wkt import dumps
 
 import orjson
-# -
+
+
+# In[2]:
 
 
 import ray
 
+
+# In[3]:
+
+
 ray.init()
+
+
+# In[4]:
+
 
 ray.cluster_resources()
 
-# +
-# %%time
-with open('13_266069_040_003 L02 PAS.json', 'r') as file:
-#with open('/mnt/c/research/kidney/15_26609_024_045 L03 PAS.json', 'r') as file:
-    # Load the JSON data into a Python dictionary
-    data = orjson.loads(file.read())
 
-import shapely
-from shapely.geometry import shape
-# -
+# In[5]:
+
+
+get_ipython().run_cell_magic('time', '', "with open('13_266069_040_003 L02 PAS.json', 'r') as file:\n#with open('/mnt/c/research/kidney/15_26609_024_045 L03 PAS.json', 'r') as file:\n    # Load the JSON data into a Python dictionary\n    data = orjson.loads(file.read())\n\nimport shapely\nfrom shapely.geometry import shape\n")
+
+
+# In[6]:
+
 
 data[0]
 
-# +
+
+# In[7]:
+
+
 # Create a base class for our declarative mapping
 Base = declarative_base()
 
@@ -54,12 +56,15 @@ class GeometryModel(Base):
     __tablename__ = 'geometries'
     id = Column(Integer, primary_key=True)
     name = Column(String)
+    centroid = Column(Geometry('POINT'))
     geom = Column(Geometry('POLYGON'))
 
 
-# +
+# In[8]:
+
+
 from sqlalchemy_utils import database_exists, create_database
-engine = create_engine('postgresql://postgres@localhost:5333/testpara')#,echo=True)
+engine = create_engine('postgresql://postgres@localhost:5333/testpar1b')#,echo=True)
 
 print(engine.url)
 try:
@@ -70,7 +75,8 @@ except:
     pass
 
 
-# -
+# In[9]:
+
 
 # Initialize Spatialite extension
 @event.listens_for(engine, "connect")
@@ -79,18 +85,27 @@ def connect(dbapi_connection, connection_record):
         cursor.execute('CREATE EXTENSION IF NOT EXISTS postgis;')
 
 
+# In[10]:
+
+
 # Create the table
 Base.metadata.create_all(engine)
 
 
+# In[11]:
+
+
 from tqdm import tqdm
+
+
+# In[12]:
 
 
 @ray.remote
 def bulk_insert(geojsons):
     from sqlalchemy import create_engine, Column, String, Integer, func, event, text
     from geoalchemy2 import Geometry 
-    engine = create_engine('postgresql://postgres@localhost:5333/testpara')#,echo=True)
+    engine = create_engine('postgresql://postgres@localhost:5333/testpar1b')#,echo=True)
 
     # Initialize Spatialite extension-
     @event.listens_for(engine, "connect")
@@ -108,15 +123,15 @@ def bulk_insert(geojsons):
             __tablename__ = 'geometries'
             id = Column(Integer, primary_key=True)
             name = Column(String)
+            centroid = Column(Geometry('POINT'))
             geom = Column(Geometry('POLYGON'))
 
         polygons=[]
         for geojson in geojsons:
-
             name = geojson["properties"]["classification"]["name"]
-            wkt = shape(geojson["geometry"]).wkt
+            shapely_geom = shape(geojson["geometry"])
             
-            polygons.append(GeometryModel(name=name,geom=wkt))
+            polygons.append(GeometryModel(name=name, geom=shapely_geom.wkt,centroid=shapely_geom.centroid.wkt))
             
         Session = sessionmaker(bind=engine)
         with Session() as session:
@@ -130,39 +145,32 @@ def bulk_insert(geojsons):
         engine.dispose() ##might be needed? --- yes needed
 
 
-# +
-# %%time
-futures = [] 
-for _ in range(12):
-    batch_size=5_000
-    polygons=[]
-    
-    for geojson in tqdm(data):
-        polygons.append(geojson)
-    
-        if len(polygons) == batch_size:
-            futures.append(bulk_insert.remote(polygons))
-            polygons=[]
-    
-    if polygons:
-        futures.append(bulk_insert.remote(polygons))
-    
-for f in tqdm(futures):
-    ray.get(f)
-# -
+# In[13]:
 
-# %%time
-#lets make sure insert worked as expected
-with  engine.connect() as conn:
-    res=conn.execute(text("select count(geom) from geometries"))
-    nresults=res.fetchall()
-    print(nresults)
 
-# %%time
-with  engine.connect() as conn:
-    res=conn.execute(text("select ST_AsGeoJSON(ST_centroid(geom))  from geometries limit 1000"))
-    centroids=res.fetchall()
+get_ipython().run_cell_magic('time', '', 'futures = [] \nfor _ in range(12):\n    batch_size=5_000\n    polygons=[]\n    \n    for geojson in tqdm(data):\n        polygons.append(geojson)\n    \n        if len(polygons) == batch_size:\n            futures.append(bulk_insert.remote(polygons))\n            polygons=[]\n    \n    if polygons:\n        futures.append(bulk_insert.remote(polygons))\n    \nfor f in tqdm(futures):\n    ray.get(f)\n')
+
+
+# In[14]:
+
+
+get_ipython().run_cell_magic('time', '', '#lets make sure insert worked as expected\nwith  engine.connect() as conn:\n    res=conn.execute(text("select count(geom) from geometries"))\n    nresults=res.fetchall()\n    print(nresults)\n')
+
+
+# In[15]:
+
+
+get_ipython().run_cell_magic('time', '', 'with  engine.connect() as conn:\n    res=conn.execute(text("select ST_AsGeoJSON(centroid) from geometries limit 1000"))\n    centroids=res.fetchall()\n')
+
+
+# In[16]:
+
 
 centroids[0:100]
+
+
+# In[ ]:
+
+
 
 
